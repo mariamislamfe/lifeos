@@ -162,7 +162,7 @@ export default function SettingsPage() {
               <Download /> Export
             </Button>
           </Row>
-          <Row label="Sample data" hint="Adds realistic example items so you can explore">
+          <Row label="Sample data" hint="Optional — adds example items to explore the app">
             <Button size="sm" onClick={loadSampleData}>
               <Upload /> Load sample data
             </Button>

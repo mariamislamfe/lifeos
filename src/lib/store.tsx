@@ -43,10 +43,6 @@ function empty(): Collections {
   return Object.fromEntries(TABLES.map((t) => [t, []])) as unknown as Collections;
 }
 
-function isEmpty(c: Collections) {
-  return TABLES.every((t) => c[t].length === 0);
-}
-
 // Insert order that satisfies foreign keys.
 const INSERT_ORDER: TableName[] = [
   "projects",
@@ -96,15 +92,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     try {
       const [user, prof] = await Promise.all([repo.getUser(), repo.getProfile()]);
       setEmail(user?.email ?? null);
-      let all = await repo.loadAll();
-      // First run: populate realistic sample data so the dashboard feels alive.
-      if (prof && !prof.seeded && isEmpty(all)) {
-        const sample = buildSampleData(new Date());
-        await insertAll(sample);
-        await repo.updateProfile({ seeded: true });
-        prof.seeded = true;
-        all = await repo.loadAll();
-      }
+      // New accounts start empty; sample data is opt-in from Settings.
+      const all = await repo.loadAll();
       setProfile(prof);
       setData(all);
       setError(null);
@@ -115,7 +104,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [repo, insertAll, setData]);
+  }, [repo, setData]);
 
   useEffect(() => {
     load();
